@@ -15,11 +15,11 @@ pipeline {
 		stage('SonarQube Analysis') {
 			agent any
 			environment {
-				scannerHome = tool 'tokage_sonarqube_scanner'
+				scannerHome = tool 'sonarqube'
 			}
 			steps {
 				withSonarQubeEnv('sonarqube') {
-					sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=sonarqube-Tokage-webapp -Dsonar.projectName=sonarqube-Tokage-webapp"
+					sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=3x03_test -Dsonar.projectName=3x03_test"
 				}
 			}
 			post {
