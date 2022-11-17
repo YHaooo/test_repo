@@ -1,6 +1,31 @@
 pipeline {
 	agent none
 	stages {
+		stage ('OWASP Dependency-Check Vulnerabilities') {
+			steps {
+				dependencyCheck additionalArguments: ''' 
+				-o "./" 
+				-s "./src"
+				-f "ALL" 
+				--prettyPrint''', odcInstallation: 'OWASP Dependency Check'
+				dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+			}
+		}
+		stage('SonarQube Analysis') {
+			environment {
+				scannerHome = tool 'tokage_sonarqube_scanner'
+			}
+			steps {
+				withSonarQubeEnv('sonarqube') {
+					sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=sonarqube-Tokage-webapp -Dsonar.projectName=sonarqube-Tokage-webapp"
+				}
+			}
+			post {
+				failure {
+					sh 'echo "failure"'
+				}
+			}
+		}
 		stage('Unit Testing'){
 			agent{
 				docker {
